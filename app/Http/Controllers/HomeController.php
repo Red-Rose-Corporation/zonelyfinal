@@ -358,83 +358,86 @@ class HomeController extends Controller
         $revCount  = $user->reviews->whereNotNull('rating')->count();
 
         // Adaptive name size — must fit panel width
-        $fs = 56;
+        $fs = 60;
         if ($ttf) {
-            foreach ([56, 46, 36, 28] as $try) {
+            foreach ([60, 50, 40, 30] as $try) {
                 $b = @imagettfbbox($try, 0, $fontB, $name);
                 if (!$b || abs($b[4] - $b[0]) <= $rw) { $fs = $try; break; }
             }
         }
 
         // Measure total content height for vertical centering
-        $btnY1 = $H - 68;
-        $cH    = $fs + 16;
-        if ($desig)              $cH += 38;
+        $btnY1 = $H - 72;
+        $cH    = $fs + 18;
+        if ($desig)              $cH += 42;
         $cH += 14;
-        if ($specialty)          $cH += 34;
-        if ($loc)                $cH += 34;
-        if ($exp)                $cH += 32;
+        if ($specialty)          $cH += 36;
+        if ($loc)                $cH += 36;
+        if ($exp)                $cH += 34;
         $cH += 18;
-        $cH += $svcs->count() * 36;
-        if ($rating && $revCount > 0) $cH += 34;
-        $cy = max(32, (int)(($btnY1 - $cH) / 2));
+        $cH += $svcs->count() * 38;
+        if ($rating && $revCount > 0) $cH += 36;
+        $cy = max(36, (int)(($btnY1 - $cH) / 2));
 
         // Gold accent line above name
-        imagefilledrectangle($img, $rx, $cy - 16, $rx + 52, $cy - 12, $cGold);
+        imagefilledrectangle($img, $rx, $cy - 18, $rx + 60, $cy - 13, $cGold);
 
         // Name — largest element, gold
         if ($ttf) imagettftext($img, $fs, 0, $rx, $cy, $cGoldLight, $fontB, $name);
-        $cy += $fs + 16;
+        $cy += $fs + 18;
 
         // Category
         if ($ttf && $desig) {
-            imagettftext($img, 22, 0, $rx, $cy, $cGoldMid, $fontB, $desig);
-            $cy += 38;
+            imagettftext($img, 25, 0, $rx, $cy, $cGoldMid, $fontB, $desig);
+            $cy += 42;
         }
 
         $cy += 14;
 
         // Specialty
         if ($ttf && $specialty) {
-            imagettftext($img, 20, 0, $rx, $cy, $cWhite, $fontB, $specialty);
-            $cy += 34;
+            imagettftext($img, 23, 0, $rx, $cy, $cWhite, $fontB, $specialty);
+            $cy += 36;
         }
 
         // Location
         if ($ttf && $loc) {
-            imagettftext($img, 19, 0, $rx, $cy, $cGoldMid, $fontR ?? $fontB, $loc);
-            $cy += 34;
+            imagettftext($img, 22, 0, $rx, $cy, $cGoldMid, $fontR ?? $fontB, $loc);
+            $cy += 36;
         }
 
         // Experience
         if ($ttf && $exp) {
-            imagettftext($img, 17, 0, $rx, $cy, $cGoldLight, $fontB, $exp . '+ Yrs Experience');
-            $cy += 32;
+            imagettftext($img, 20, 0, $rx, $cy, $cGoldLight, $fontB, $exp . '+ Yrs Experience');
+            $cy += 34;
         }
 
         $cy += 10;
 
         // Gold divider
         $divC = imagecolorallocatealpha($img, 212, 175, 55, 100);
+        imagesetthickness($img, 2);
         imageline($img, $rx, $cy, $rx + $rw, $cy, $divC);
+        imagesetthickness($img, 1);
         $cy += 18;
 
         // Services — larger bullets + text
         foreach ($svcs as $svc) {
             $t  = Str::limit(preg_replace('/[^\x20-\x7E]/u', '', $svc->title ?? ''), 40);
             if (!trim($t)) continue;
-            $bx = $rx + 13; $by = $cy - 8;
-            imageellipse($img, $bx, $by, 20, 20, $cGoldLight);
-            imagefilledellipse($img, $bx, $by, 9, 9, $cGoldLight);
-            if ($ttf) imagettftext($img, 18, 0, $rx + 34, $cy, $cWhiteDim, $fontR ?? $fontB, $t);
-            $cy += 36;
+            $bx = $rx + 14; $by = $cy - 9;
+            imageellipse($img, $bx, $by, 22, 22, $cGoldLight);
+            imagefilledellipse($img, $bx, $by, 10, 10, $cGoldLight);
+            if ($ttf) imagettftext($img, 20, 0, $rx + 38, $cy, $cWhiteDim, $fontR ?? $fontB, $t);
+            $cy += 38;
         }
 
         // Rating
         if ($rating && $revCount > 0 && $ttf) {
+            $stars    = str_repeat('★', (int)round($rating)) . str_repeat('☆', 5 - (int)round($rating));
             $ratingTx = number_format($rating, 1) . '/5  (' . $revCount . ' reviews)';
-            imagettftext($img, 17, 0, $rx, $cy + 8, $cGold, $fontB, $ratingTx);
-            $cy += 34;
+            imagettftext($img, 20, 0, $rx, $cy + 8, $cGold, $fontB, $ratingTx);
+            $cy += 36;
         }
 
         // CTA Button — gold pill, full content-panel width
@@ -463,10 +466,10 @@ class HomeController extends Controller
 
         if ($ttf) {
             $btnTx = 'VIEW PROFILE  >>';
-            $bbox  = @imagettfbbox(21, 0, $fontB, $btnTx);
+            $bbox  = @imagettfbbox(23, 0, $fontB, $btnTx);
             $txW   = $bbox ? abs($bbox[4] - $bbox[0]) : 180;
             $txX   = $btnX1 + (int)(($btnX2 - $btnX1 - $txW) / 2);
-            imagettftext($img, 21, 0, $txX, $btnY1 + (int)($btnH / 2) + 8, $cBg, $fontB, $btnTx);
+            imagettftext($img, 23, 0, $txX, $btnY1 + (int)($btnH / 2) + 9, $cBg, $fontB, $btnTx);
         }
 
         header('Content-Type: image/png');
