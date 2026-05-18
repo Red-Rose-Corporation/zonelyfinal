@@ -37,9 +37,8 @@
 @section('og_description', trim(($user->category?->title ?? '') . ($user->city ? ' · ' . $user->city . ($user->state ? ', ' . $user->state : '') : '') . ($user->experience ? ' · ' . $user->experience . '+ yrs experience' : '')))
 @section('og_image',       route('frontend.og.image', $user->slug).'?v='.$user->updated_at->timestamp)
 @section('og_extra')
-<meta property="og:image:width"  content="1200">
-<meta property="og:image:height" content="630">
-<meta property="og:image:type"   content="image/png">
+<meta property="og:type" content="profile">
+<meta property="profile:first_name" content="{{ $user->name }}">
 @endsection
 
 @section('schema')
