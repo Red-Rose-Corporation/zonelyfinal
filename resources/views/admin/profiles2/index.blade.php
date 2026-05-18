@@ -9,24 +9,45 @@
 
         <!-- Page Header -->
         <div class="section-card">
-            <div class="card-header bg-primary text-white p-4 d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">
-                    <i class="fas fa-users me-2"></i>
-                    {{ ucfirst($type ?? ($status ?? 'All')) }} User Profiles
-                </h5>
-
-                <div class="btn-group flex-wrap gap-1">
-                    <a href="{{ route('admin.profiles.index') }}"
-                        class="btn btn-sm {{ !$type && !$status ? 'btn-light' : 'btn-outline-light' }}">All</a>
-                    <a href="{{ route('admin.profiles.index', ['type' => 'seller']) }}"
-                        class="btn btn-sm {{ $type == 'seller' ? 'btn-light' : 'btn-outline-light' }}">Sellers</a>
-                    <a href="{{ route('admin.profiles.index', ['type' => 'user']) }}"
-                        class="btn btn-sm {{ $type == 'user' ? 'btn-light' : 'btn-outline-light' }}">Buyers</a>
-                    <a href="{{ route('admin.profiles.index', ['status' => 'verified']) }}"
-                        class="btn btn-sm {{ ($status ?? '') == 'verified' ? 'btn-light' : 'btn-outline-light' }}">Verified</a>
-                    <a href="{{ route('admin.profiles.index', ['status' => 'unverified']) }}"
-                        class="btn btn-sm {{ ($status ?? '') == 'unverified' ? 'btn-light' : 'btn-outline-light' }}">Pending</a>
+            <div class="card-header bg-primary text-white p-4">
+                <div class="d-flex justify-content-between align-items-center gap-3 flex-wrap">
+                    <h5 class="mb-0">
+                        <i class="fas fa-users me-2"></i>
+                        {{ ucfirst($type ?? ($status ?? 'All')) }} User Profiles
+                        <span class="badge bg-white text-primary ms-2" style="font-size:12px">{{ $users->total() }}</span>
+                    </h5>
+                    <div class="d-flex align-items-center gap-2 flex-wrap">
+                        <form method="GET" action="{{ route('admin.profiles.index') }}" class="d-flex gap-2">
+                            @if($type)<input type="hidden" name="type" value="{{ $type }}">@endif
+                            @if($status)<input type="hidden" name="status" value="{{ $status }}">@endif
+                            <input type="text" name="search" value="{{ $search ?? '' }}"
+                                   placeholder="Search name, email, phone..."
+                                   class="form-control form-control-sm" style="min-width:220px;background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.3);color:#fff"
+                                   oninput="this.style.color='#fff'" onfocus="this.style.background='rgba(255,255,255,.25)'"
+                                   onblur="this.style.background='rgba(255,255,255,.15)'">
+                            <button class="btn btn-sm btn-light" type="submit"><i class="fas fa-search"></i></button>
+                            @if(!empty($search))
+                            <a href="{{ route('admin.profiles.index', array_filter(['type'=>$type,'status'=>$status])) }}"
+                               class="btn btn-sm btn-outline-light"><i class="fas fa-times"></i></a>
+                            @endif
+                        </form>
+                        <div class="btn-group">
+                            <a href="{{ route('admin.profiles.index') }}"
+                                class="btn btn-sm {{ !$type && !$status ? 'btn-light' : 'btn-outline-light' }}">All</a>
+                            <a href="{{ route('admin.profiles.index', ['type' => 'seller']) }}"
+                                class="btn btn-sm {{ $type == 'seller' ? 'btn-light' : 'btn-outline-light' }}">Sellers</a>
+                            <a href="{{ route('admin.profiles.index', ['type' => 'user']) }}"
+                                class="btn btn-sm {{ $type == 'user' ? 'btn-light' : 'btn-outline-light' }}">Buyers</a>
+                            <a href="{{ route('admin.profiles.index', ['status' => 'verified']) }}"
+                                class="btn btn-sm {{ ($status ?? '') == 'verified' ? 'btn-light' : 'btn-outline-light' }}">Verified</a>
+                            <a href="{{ route('admin.profiles.index', ['status' => 'unverified']) }}"
+                                class="btn btn-sm {{ ($status ?? '') == 'unverified' ? 'btn-light' : 'btn-outline-light' }}">Pending</a>
+                        </div>
+                    </div>
                 </div>
+                @if(!empty($search))
+                <div class="mt-2 text-white-50 small"><i class="fas fa-filter me-1"></i>Showing results for "{{ $search }}" — {{ $users->total() }} found</div>
+                @endif
             </div>
 
             <div class="card-body p-4">
@@ -116,46 +137,43 @@
                                             @if ($user->type === 'admin')
                                                 <span class="text-muted">N/A</span>
                                             @else
-                                                <div class="dropdown">
-                                                    <button class="btn btn-sm btn-light" type="button"
-                                                        data-bs-toggle="dropdown" aria-expanded="false">
-                                                        <i class="fas fa-ellipsis-v"></i>
-                                                    </button>
+                                                <div class="d-flex align-items-center gap-1">
+                                                    {{-- Quick verify (only for pending) --}}
+                                                    @if(!$user->status)
+                                                    <form method="POST" action="{{ route('admin.profiles.verify', $user->id) }}">
+                                                        @csrf
+                                                        <button type="submit" class="btn btn-sm btn-success"
+                                                                title="Verify now" onclick="return confirm('Verify {{ addslashes($user->name) }}?')">
+                                                            <i class="fas fa-check me-1"></i> Verify
+                                                        </button>
+                                                    </form>
+                                                    @endif
 
-                                                    <ul class="dropdown-menu dropdown-menu-end shadow-sm">
-
-                                                        @if ($user->status)
+                                                    <div class="dropdown">
+                                                        <button class="btn btn-sm btn-light" type="button"
+                                                            data-bs-toggle="dropdown" aria-expanded="false">
+                                                            <i class="fas fa-ellipsis-v"></i>
+                                                        </button>
+                                                        <ul class="dropdown-menu dropdown-menu-end shadow-sm">
                                                             <li>
                                                                 <a class="dropdown-item"
                                                                     href="{{ route('admin.profiles.edit', $user->id) }}">
                                                                     <i class="fas fa-edit me-2 text-primary"></i> Edit
                                                                 </a>
                                                             </li>
-                                                        @else
+                                                            <li><hr class="dropdown-divider"></li>
                                                             <li>
-                                                                <a class="dropdown-item"
-                                                                    href="{{ route('admin.profiles.edit', $user->id) }}">
-                                                                    <i class="fas fa-check me-2 text-success"></i> Verify
-                                                                </a>
+                                                                <form action="{{ route('admin.profiles.destroy', $user->id) }}"
+                                                                    method="POST" onsubmit="return confirm('Delete user: ' + @json($user->name) + '?')">
+                                                                    @csrf
+                                                                    @method('DELETE')
+                                                                    <button type="submit" class="dropdown-item text-danger">
+                                                                        <i class="fas fa-trash me-2"></i> Delete
+                                                                    </button>
+                                                                </form>
                                                             </li>
-                                                        @endif
-
-                                                        <li>
-                                                            <hr class="dropdown-divider">
-                                                        </li>
-
-                                                        <li>
-                                                            <form action="{{ route('admin.profiles.destroy', $user->id) }}"
-                                                                method="POST" onsubmit="return confirm('Delete user: ' + @json($user->name) + '?')">
-                                                                @csrf
-                                                                @method('DELETE')
-                                                                <button type="submit" class="dropdown-item text-danger">
-                                                                    <i class="fas fa-trash me-2"></i> Delete
-                                                                </button>
-                                                            </form>
-                                                        </li>
-
-                                                    </ul>
+                                                        </ul>
+                                                    </div>
                                                 </div>
                                             @endif
                                         </td>

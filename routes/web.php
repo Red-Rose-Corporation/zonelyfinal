@@ -245,6 +245,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('edit/{id}', [PageController::class, 'profiles_edit'])->name('edit');
             Route::put('update/{id}', [PageController::class, 'profiles_update'])->name('update');
             Route::delete('destroy/{id}', [PageController::class, 'profiles_destroy'])->name('destroy');
+            Route::post('verify/{id}', [PageController::class, 'profiles_verify'])->name('verify');
         });
 
         // Leads module

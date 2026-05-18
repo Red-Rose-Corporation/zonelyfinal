@@ -109,6 +109,7 @@ class PageController extends Controller
     {
         $status = $request->query('status');
         $type   = $request->query('type');
+        $search = trim($request->query('search', ''));
         $isManager = auth()->user()?->type === 'manager';
 
         $query = User::latest();
@@ -128,9 +129,29 @@ class PageController extends Controller
             $query->where('type', $type);
         }
 
+        if ($search !== '') {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%")
+                  ->orWhere('phone', 'like', "%{$search}%")
+                  ->orWhere('business_name', 'like', "%{$search}%");
+            });
+        }
+
         $users = $query->paginate(50)->withQueryString();
 
-        return view('admin.profiles2.index', compact('users', 'status', 'type'));
+        return view('admin.profiles2.index', compact('users', 'status', 'type', 'search'));
+    }
+
+    public function profiles_verify($id)
+    {
+        $user = User::findOrFail($id);
+        $actorType = auth()->user()?->type;
+        if (in_array($actorType, ['manager', 'coo']) && in_array($user->type, ['admin', 'coo', 'manager'])) {
+            abort(403);
+        }
+        $user->update(['status' => true]);
+        return back()->with('success', $user->name . ' verified successfully.');
     }
     function profiles_edit($id)
     {
