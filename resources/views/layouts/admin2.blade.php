@@ -185,7 +185,7 @@
         }
 
         .section-card:hover {
-            transform: translateY(-5px);
+            box-shadow: 0 8px 16px -2px rgba(0, 0, 0, 0.12);
         }
 
         .btn-toggle-sidebar {

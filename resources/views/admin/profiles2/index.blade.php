@@ -49,11 +49,11 @@
                             <tbody>
                                 @foreach ($users as $index => $user)
                                     <tr>
-                                        <td>{{ $loop->iteration }}</td>
+                                        <td class="text-muted small">{{ ($users->currentPage()-1)*$users->perPage()+$loop->iteration }}</td>
                                         <td>
                                             <div class="d-flex align-items-center gap-2">
                                                 @if($user->profile_photo)
-                                                <img src="{{ asset($user->profile_photo) }}"
+                                                <img src="{{ str_starts_with($user->profile_photo, 'http') ? $user->profile_photo : asset($user->profile_photo) }}"
                                                      onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&size=36&background=0ea5e9&color=fff'"
                                                      class="rounded-circle" width="36" height="36" style="object-fit:cover">
                                                 @else
@@ -164,6 +164,14 @@
                             </tbody>
                         </table>
                     </div>
+                    @if($users->hasPages())
+                    <div class="p-3 border-top d-flex justify-content-between align-items-center flex-wrap gap-2">
+                        <span class="text-muted small">
+                            Showing {{ $users->firstItem() }}–{{ $users->lastItem() }} of {{ $users->total() }} users
+                        </span>
+                        {{ $users->links() }}
+                    </div>
+                    @endif
                 @else
                     <div class="text-center py-5">
                         <i class="fas fa-user-slash fa-3x text-muted mb-3"></i>

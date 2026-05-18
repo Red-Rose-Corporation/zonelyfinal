@@ -128,7 +128,7 @@ class PageController extends Controller
             $query->where('type', $type);
         }
 
-        $users = $query->get();
+        $users = $query->paginate(50)->withQueryString();
 
         return view('admin.profiles2.index', compact('users', 'status', 'type'));
     }

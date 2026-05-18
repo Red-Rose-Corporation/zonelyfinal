@@ -125,7 +125,7 @@
                                     </div>
                                     <div class="d-flex align-items-center gap-1">
                                         <span class="text-muted" style="font-size:11px;font-weight:600;min-width:72px">LOGIN LINK</span>
-                                        <code class="bg-white px-2 py-1 rounded border small text-truncate" style="max-width:160px" id="lnk_{{ $manager->id }}">{{ $profile->login_url ?? route('user.login') }}</code>
+                                        <code class="bg-white px-2 py-1 rounded border small text-truncate" style="max-width:320px" id="lnk_{{ $manager->id }}">{{ $profile->login_url ?? route('user.login') }}</code>
                                         <button class="btn btn-sm btn-outline-secondary py-0 px-1" onclick="copyText('lnk_{{ $manager->id }}')" title="Copy"><i class="fas fa-copy" style="font-size:11px"></i></button>
                                     </div>
                                 </div>

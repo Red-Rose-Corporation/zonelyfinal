@@ -331,7 +331,7 @@
                             <td>
                                 <div class="d-flex align-items-center gap-2">
                                     @if($seller->profile_photo)
-                                    <img src="{{ asset($seller->profile_photo) }}"
+                                    <img src="{{ str_starts_with($seller->profile_photo, 'http') ? $seller->profile_photo : asset($seller->profile_photo) }}"
                                          onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode($seller->name) }}&size=32&background=0ea5e9&color=fff'"
                                          class="rounded-circle" width="32" height="32" style="object-fit:cover">
                                     @else
