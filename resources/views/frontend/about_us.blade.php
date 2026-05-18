@@ -52,25 +52,25 @@
             <p class="text-slate-500 text-lg leading-relaxed">
                 Zonely removes that complexity. We help professionals create branded pages with booking, messaging, and lead tracking — no coding, no expensive developers, just results.
             </p>
-            <div class="grid grid-cols-3 gap-6 mt-12">
+            <div class="grid grid-cols-3 gap-4 mt-12">
                 <div>
-                    <p class="text-3xl font-bold text-slate-900">50+</p>
-                    <p class="text-xs text-slate-400 font-bold uppercase tracking-widest mt-1">Experts Listed</p>
+                    <p class="text-2xl sm:text-3xl font-bold text-slate-900">50+</p>
+                    <p class="text-[10px] sm:text-xs text-slate-400 font-bold uppercase tracking-widest mt-1">Experts Listed</p>
                 </div>
                 <div>
-                    <p class="text-3xl font-bold text-slate-900">90%+</p>
-                    <p class="text-xs text-slate-400 font-bold uppercase tracking-widest mt-1">Satisfaction</p>
+                    <p class="text-2xl sm:text-3xl font-bold text-slate-900">90%+</p>
+                    <p class="text-[10px] sm:text-xs text-slate-400 font-bold uppercase tracking-widest mt-1">Satisfaction</p>
                 </div>
                 <div>
-                    <p class="text-3xl font-bold text-slate-900">🌍</p>
-                    <p class="text-xs text-slate-400 font-bold uppercase tracking-widest mt-1">Worldwide</p>
+                    <p class="text-2xl sm:text-3xl font-bold text-slate-900">🌍</p>
+                    <p class="text-[10px] sm:text-xs text-slate-400 font-bold uppercase tracking-widest mt-1">Worldwide</p>
                 </div>
             </div>
         </div>
         <div class="relative">
             <div class="absolute -inset-4 bg-teal-100 rounded-[3rem] -z-10 transform rotate-3"></div>
             <img src="https://images.unsplash.com/photo-1556761175-4b46a572b786?auto=format&fit=crop&q=80&w=900"
-                class="rounded-[2.5rem] shadow-2xl object-cover h-[500px] w-full" alt="Team working">
+                class="rounded-2xl sm:rounded-[2.5rem] shadow-2xl object-cover h-[280px] sm:h-[500px] w-full" alt="Team working">
         </div>
     </div>
 </section>
@@ -140,7 +140,7 @@
             <div class="w-full lg:w-1/3">
                 <div class="relative group mx-auto max-w-sm">
                     <div class="absolute -inset-1 bg-gradient-to-r from-teal-700 to-violet-600 rounded-[2.5rem] blur opacity-30"></div>
-                    <div class="relative aspect-[4/5] overflow-hidden rounded-[2.5rem] border-4 border-slate-800">
+                    <div class="relative aspect-[4/5] overflow-hidden rounded-2xl sm:rounded-[2.5rem] border-4 border-slate-800">
                         <img src="{{ asset('frontend/img/ceo.webp') }}"
                             class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700"
                             alt="Md. Norozzaman — Founder & CEO of Zonely"

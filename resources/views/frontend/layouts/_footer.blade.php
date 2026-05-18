@@ -1,7 +1,7 @@
 <div id="zonely-platform-footer" class="bg-slate-950 text-white">
 <footer class="max-w-7xl mx-auto px-4 sm:px-6 pt-14 pb-8">
 
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-10 mb-12">
 
         {{-- Brand --}}
         <div class="col-span-2 lg:col-span-1">
