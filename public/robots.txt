@@ -4,4 +4,4 @@ Disallow: /admin/
 Disallow: /downloads/
 Disallow: /uploads/
 
-Sitemap: https://www.zonelyleads.com/sitemap.xml
+Sitemap: https://www.zonelyleads.com/sitemap
