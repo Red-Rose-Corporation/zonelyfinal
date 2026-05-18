@@ -630,19 +630,34 @@ class HomeController extends Controller
     {
         $now = Carbon::now()->toAtomString();
 
-        // Static pages
+        // Static pages — local SEO priorities
         $static = collect([
-            ['loc' => route('frontend.home'),              'priority' => '1.0', 'changefreq' => 'daily',   'lastmod' => $now],
-            ['loc' => route('frontend.service.all'),       'priority' => '0.9', 'changefreq' => 'daily',   'lastmod' => $now],
-            ['loc' => route('frontend.blog'),              'priority' => '0.8', 'changefreq' => 'weekly',  'lastmod' => $now],
-            ['loc' => route('frontend.tools'),             'priority' => '0.7', 'changefreq' => 'monthly', 'lastmod' => $now],
-            ['loc' => route('frontend.about-us'),          'priority' => '0.6', 'changefreq' => 'monthly', 'lastmod' => $now],
-            ['loc' => route('frontend.help'),              'priority' => '0.5', 'changefreq' => 'monthly', 'lastmod' => $now],
-            ['loc' => route('frontend.privacy-policy'),    'priority' => '0.3', 'changefreq' => 'yearly',  'lastmod' => $now],
-            ['loc' => route('frontend.terms-and-condition'), 'priority' => '0.3', 'changefreq' => 'yearly', 'lastmod' => $now],
+            // Home: hub for local service discovery
+            ['loc' => route('frontend.home'),                'priority' => '1.0', 'changefreq' => 'daily',   'lastmod' => $now],
+            // Browse all: high-intent "find local expert" page
+            ['loc' => route('frontend.service.all'),         'priority' => '0.9', 'changefreq' => 'daily',   'lastmod' => $now],
+            // Blog: local SEO content
+            ['loc' => route('frontend.blog'),                'priority' => '0.6', 'changefreq' => 'weekly',  'lastmod' => $now],
+            ['loc' => route('frontend.tools'),               'priority' => '0.5', 'changefreq' => 'monthly', 'lastmod' => $now],
+            ['loc' => route('frontend.about-us'),            'priority' => '0.4', 'changefreq' => 'monthly', 'lastmod' => $now],
+            ['loc' => route('frontend.help'),                'priority' => '0.3', 'changefreq' => 'monthly', 'lastmod' => $now],
+            ['loc' => route('frontend.privacy-policy'),      'priority' => '0.2', 'changefreq' => 'yearly',  'lastmod' => $now],
+            ['loc' => route('frontend.terms-and-condition'), 'priority' => '0.2', 'changefreq' => 'yearly',  'lastmod' => $now],
         ]);
 
-        // Seller profile pages (verified sellers with slugs)
+        // Category pages — top local SEO pages ("plumbers near me", "lawyers in [city]")
+        $categories = Category::where('is_active', 1)
+            ->whereNotNull('slug')
+            ->select('slug', 'updated_at')
+            ->get()
+            ->map(fn($c) => [
+                'loc'        => route('frontend.category', $c->slug),
+                'priority'   => '0.9',
+                'changefreq' => 'daily',
+                'lastmod'    => optional($c->updated_at)->toAtomString() ?? $now,
+            ]);
+
+        // Seller profile pages — highest value: rank for "[name] + [city]" and "[service] in [city]"
         $sellers = User::where('type', 'seller')
             ->where('status', true)
             ->whereNotNull('slug')
@@ -650,34 +665,22 @@ class HomeController extends Controller
             ->get()
             ->map(fn($u) => [
                 'loc'        => route('frontend.service.show', $u->slug),
-                'priority'   => '0.8',
+                'priority'   => '1.0',
                 'changefreq' => 'weekly',
                 'lastmod'    => optional($u->updated_at)->toAtomString() ?? $now,
             ]);
 
-        // Category pages
-        $categories = Category::where('is_active', 1)
-            ->whereNotNull('slug')
-            ->select('slug', 'updated_at')
-            ->get()
-            ->map(fn($c) => [
-                'loc'        => route('frontend.category', $c->slug),
-                'priority'   => '0.7',
-                'changefreq' => 'weekly',
-                'lastmod'    => optional($c->updated_at)->toAtomString() ?? $now,
-            ]);
-
-        // Blog posts
+        // Blog posts — local SEO content marketing
         $blogs = Blog::select('slug', 'updated_at')
             ->get()
             ->map(fn($b) => [
                 'loc'        => route('blog.show', $b->slug),
-                'priority'   => '0.6',
+                'priority'   => '0.7',
                 'changefreq' => 'monthly',
                 'lastmod'    => optional($b->updated_at)->toAtomString() ?? $now,
             ]);
 
-        $sitemapEntries = $static->merge($sellers)->merge($categories)->merge($blogs);
+        $sitemapEntries = $static->merge($categories)->merge($sellers)->merge($blogs);
 
         return response()
             ->view('frontend.sitemap', compact('sitemapEntries'))
