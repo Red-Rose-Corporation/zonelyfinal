@@ -13,7 +13,7 @@
         $canonicalUrl  = url()->current();
         $ogTitle       = trim($__env->yieldContent('og_title'))       ?: ($meta_title ?? config('app.name'));
         $ogDescription = trim($__env->yieldContent('og_description'))  ?: ($meta_description ?? '');
-        $ogImage       = trim($__env->yieldContent('og_image'))        ?: asset('frontend/img/zonely_logo.png');
+        $ogImage       = trim($__env->yieldContent('og_image'))        ?: 'https://pub-182a04cb186a460899e4b9f34efc96a6.r2.dev/uploads/zonelysharingcard.png';
         if ($ogImage && !str_starts_with($ogImage, 'http')) {
             $ogImage = asset($ogImage);
         }
@@ -31,15 +31,15 @@
     <meta property="og:description" content="{{ Str::limit(strip_tags($ogDescription), 200) }}">
     <meta property="og:image"            content="{{ $ogImage }}">
     <meta property="og:image:secure_url" content="{{ $ogImage }}">
-    <meta property="og:image:width"      content="1080">
-    <meta property="og:image:height"     content="1080">
+    <meta property="og:image:width"      content="1423">
+    <meta property="og:image:height"     content="752">
     <meta property="og:image:type"       content="image/png">
     <meta property="og:image:alt"        content="{{ $ogTitle }}">
     <meta property="og:site_name"   content="Zonely">
     @yield('og_extra')
 
     {{-- Twitter Card ────────────────────────────────── --}}
-    <meta name="twitter:card"        content="summary">
+    <meta name="twitter:card"        content="summary_large_image">
     <meta name="twitter:title"       content="{{ $ogTitle }}">
     <meta name="twitter:description" content="{{ Str::limit(strip_tags($ogDescription), 200) }}">
     <meta name="twitter:image"       content="{{ $ogImage }}">
